@@ -102,26 +102,15 @@ dvar float+ rebFlow[rebEdge][t0..te-1];
 dvar float+ acc[Region][t0..te][class];
 dvar float+ demandFlow[demandODPair][class]; 
 dvar float+ pickupFlow[pickupEdge][t0..te-1][class]; 
-dvar float+ obj;
 maximize sum(e in demandODPair, c in class) demandFlow[e][c] * (fare[<e.i,e.j>] - sigma*paxll[<e.i,e.j>])
  - sum(e in pickupEdge, t in t0..te-1, c in class) pickupFlow[e][t][c] * (vot*pcktt[e]+sigma*pckll[e])
   - sum(e in rebEdge, t in t0..te-1) (rebFlow[e][t]+acc[e.i][t]["non-auto"]*rebProb[e]) * rebll[e] * sigma
  + xi * (sum(e in demandODPair) demandFlow[e]["non-auto"] * fare_n[<e.i,e.j>]
  - sum(e in pickupEdge, t in t0..te-1) pickupFlow[e][t]["non-auto"] * pckCost[e]);
 
-//maximize sum(e in demandODPair, c in class) demandFlow[e][c] * fare[<e.i,e.j>] *commission[c]
-// - sum(e in demandODPair)sigma*paxll[<e.i,e.j>] *demandFlow[e]["auto"] - sum(e in rebEdge, t in t0..te-1)rebFlow[e][t]* rebll[e] * sigma
-//- sum(e in pickupEdge, t in t0..te-1) pickupFlow[e][t]["auto"] * sigma*pckll[e]
-// + xi * (sum(e in demandODPair) demandFlow[e]["non-auto"] * fare_n[<e.i,e.j>]
-// - sum(e in pickupEdge, t in t0..te-1) pickupFlow[e][t]["non-auto"] * pckCost[e]);
  
 subject to{
 
-	obj == sum(e in demandODPair, c in class) demandFlow[e][c] * (fare[<e.i,e.j>] - sigma*paxll[<e.i,e.j>])
- - sum(e in pickupEdge, t in t0..te-1, c in class) pickupFlow[e][t][c] * (vot*pcktt[e]+sigma*pckll[e])
-  - sum(e in rebEdge, t in t0..te-1) (rebFlow[e][t]+acc[e.i][t]["non-auto"]*rebProb[e]) * rebll[e] * sigma
- + xi * (sum(e in demandODPair) demandFlow[e]["non-auto"] * fare_n[<e.i,e.j>]
- - sum(e in pickupEdge, t in t0..te-1) pickupFlow[e][t]["non-auto"] * pckCost[e]);
     forall(t in t0..te-1)
 	{
 		forall(r in Region)
